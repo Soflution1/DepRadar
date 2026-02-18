@@ -1,0 +1,66 @@
+{
+  "name": "depup-mcp",
+  "version": "3.0.0",
+  "description": "MCP server for complete dev infrastructure maintenance. Dependencies, CVEs, secrets, licenses, runtimes, Docker, GitHub Actions. 20 tools, 9 languages.",
+  "keywords": [
+    "mcp",
+    "dependencies",
+    "update",
+    "svelte",
+    "sveltekit",
+    "nextjs",
+    "cursor",
+    "claude",
+    "ai-coding",
+    "vibe-coding",
+    "maintenance",
+    "python",
+    "rust",
+    "go",
+    "php",
+    "ruby",
+    "dart",
+    "npm",
+    "pnpm",
+    "yarn"
+  ],
+  "author": "Soflution Ltd",
+  "license": "MIT",
+  "homepage": "https://github.com/Soflution1/depup-mcp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Soflution1/depup-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Soflution1/depup-mcp/issues"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "depup-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "check": "node dist/index.js --check",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
