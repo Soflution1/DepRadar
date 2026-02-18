@@ -103,6 +103,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',system-ui,san
     </div>
   </div>
   <div style="display:flex;gap:10px">
+    <button class="btn btn-success" id="update-all-btn" onclick="updateAllProjects()" style="display:none">⬆ Update All Projects</button>
     <button class="btn btn-primary" id="scan-btn" onclick="triggerScan()">⟳ Scan All Projects</button>
     <button class="btn btn-outline" onclick="loadData()">Refresh</button>
   </div>
@@ -178,6 +179,8 @@ function renderOverview(data){
   const outdated=p.filter(x=>x.outdatedCount>0).length;
   const majors=p.reduce((a,x)=>a+(x.majorCount||0),0);
   const avg=p.length?Math.round(p.reduce((a,x)=>a+x.score,0)/p.length):0;
+
+  document.getElementById('update-all-btn').style.display=outdated>0?'inline-block':'none';
 
   document.getElementById('s-total').textContent=p.length;
   document.getElementById('s-ok').textContent=ok;
@@ -372,6 +375,26 @@ async function dryRun(project){
   }catch(e){
     el.innerHTML=`<div class="update-result">Error: ${esc(e.message)}</div>`;
   }
+}
+
+async function updateAllProjects(){
+  const btn=document.getElementById('update-all-btn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Updating all...';
+  const results=[];
+  for(const proj of allProjects.filter(p=>p.outdatedCount>0)){
+    try{
+      const r=await fetch('/api/update',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project:proj.project,level:'minor'})});
+      const d=await r.json();
+      results.push({project:proj.project,success:d.success!==false,cmd:d.command});
+    }catch(e){results.push({project:proj.project,success:false,cmd:e.message})}
+  }
+  btn.disabled=false;
+  btn.innerHTML='⬆ Update All Projects';
+  const ok=results.filter(r=>r.success).length;
+  const fail=results.filter(r=>!r.success).length;
+  alert('Update complete: '+ok+' succeeded, '+fail+' failed');
+  triggerScan();
 }
 
 async function triggerScan(){
