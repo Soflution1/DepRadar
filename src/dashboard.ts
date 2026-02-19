@@ -224,4 +224,51 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
 const server = createServer(handleRequest);
 server.listen(PORT, "127.0.0.1", () => {
   console.error("[depsonar] Dashboard v3 running on http://127.0.0.1:" + PORT);
+
+  // ─── Built-in Background Scheduler ─────────────────────────────────
+  const SCAN_INTERVAL = 12 * 60 * 60 * 1000; // 12h
+  const UPDATE_INTERVAL = 24 * 60 * 60 * 1000; // 24h
+
+  async function backgroundScan() {
+    if (scanning) return;
+    console.error("[depsonar] Background scan starting...");
+    scanning = true;
+    try { await runScanWithProgress(); } catch (e) { console.error("[depsonar] Background scan error:", e); }
+    scanning = false;
+    console.error("[depsonar] Background scan complete.");
+  }
+
+  async function backgroundAutoUpdate() {
+    const config = loadConfig() as any;
+    const autoList: string[] = config.autoUpdate || [];
+    if (!autoList.length) return;
+    console.error(`[depsonar] Auto-updating ${autoList.length} projects (minor+patch only)...`);
+    const projects = discoverProjects();
+    let ok = 0, fail = 0;
+    for (const name of autoList) {
+      const info = projects.find(p => p.name === name);
+      if (!info) continue;
+      const cmd = buildUpdateCommand(info, undefined, "minor");
+      try {
+        run(cmd, info.path);
+        ok++;
+        console.error(`[depsonar]   ✓ ${name}`);
+      } catch (e: any) {
+        fail++;
+        console.error(`[depsonar]   ✗ ${name}: ${e.message}`);
+      }
+    }
+    console.error(`[depsonar] Auto-update done: ${ok} updated, ${fail} failed.`);
+    // Rescan after updates
+    if (ok > 0) await backgroundScan();
+  }
+
+  // Initial scan on startup (after 10s to let things settle)
+  setTimeout(backgroundScan, 10_000);
+
+  // Periodic scan every 12h
+  setInterval(backgroundScan, SCAN_INTERVAL);
+
+  // Periodic auto-update every 24h (only projects with auto-update toggle ON)
+  setInterval(backgroundAutoUpdate, UPDATE_INTERVAL);
 });

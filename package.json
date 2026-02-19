@@ -53,6 +53,8 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
+    "dashboard": "node dist/index.js --dashboard",
+    "daemon": "node dist/index.js --daemon",
     "check": "node dist/index.js --check",
     "lint": "tsc --noEmit",
     "prepublishOnly": "npm run build"
