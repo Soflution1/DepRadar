@@ -12,6 +12,10 @@
   <img src="https://img.shields.io/badge/license-MIT-blue"/>
 </p>
 
+<p align="center">
+  <a href="cursor://anysphere.cursor-deeplink/mcp/install?name=depsonar&config=eyJ0eXBlIjoic3RkaW8iLCJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImRlcHNvbmFyQGxhdGVzdCJdfQ=="><img src="https://cursor.com/deeplink/mcp-install-dark.svg" alt="Install in Cursor" /></a>
+</p>
+
 **depsonar** is an MCP server that keeps your projects' dependencies up to date, scans for vulnerabilities, detects framework migrations, and audits your entire dev infrastructure — directly from Cursor, Claude, or any MCP-compatible AI assistant.
 
 Supports **Node.js**, **Python**, **Rust**, **Go**, **PHP**, **Ruby**, **Dart/Flutter**, **Swift**, and **Kotlin/Java**.
